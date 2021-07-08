@@ -22,7 +22,7 @@ class ProjectHelper:
         wd.find_element_by_xpath(u"//input[@value='Добавить проект']").click()
 
     def generate_random_name(self):
-        symbols = string.ascii_letters
+        symbols = string.ascii_letters + string.digits
         return "group" + "".join([random.choice(symbols) for i in range(random.randrange(10))])
 
     def delete(self, name):

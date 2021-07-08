@@ -1,6 +1,7 @@
 import json
 import pytest
 import os.path
+import ftputil
 from fixture.application import Application
 from fixture.db import DbFixture
 
@@ -36,12 +37,39 @@ def app(request, config):
 @pytest.fixture(scope="session")
 def db(request, config):
     db_config = config["db"]
-    db_fixture = DbFixture(host=db_config["host"], name=db_config["name"], user=db_config["user"], password=db_config["password"])
+    db_fixture = DbFixture(host=db_config["host"], name=db_config["name"], user=db_config["user"],
+                           password=db_config["password"])
 
     def fin():
         db_fixture.destroy()
     request.addfinalizer(fin)
     return db_fixture
+
+
+# @pytest.fixture(scope="session", autouse=True)
+# def configure_server(request, config):
+#     install_server_configuration(config['ftp']['host'], config['ftp']['username'], config['ftp']['password'])
+#
+#     def fin():
+#         restore_server_configuration(config['ftp']['host'], config['ftp']['username'], config['ftp']['password'])
+#     request.addfinalizer(fin)
+#
+#
+# def install_server_configuration(host, username, password):
+#     with ftputil.FTPHost(host, username, password) as remote:
+#         if remote.path.isfile("config_inc.php.bak"):
+#             remote.remove("config_inc.php.bak")
+#         if remote.path.isfile("config_inc.php"):
+#             remote.rename("config_inc.php", "config_inc.php.bak")
+#         remote.upload(os.path.join(os.path.dirname(__file__), "resources/config_inc.php"), "config_inc.php")
+#
+#
+# def restore_server_configuration(host, username, password):
+#     with ftputil.FTPHost(host, username, password) as remote:
+#         if remote.path.isfile("config_inc.php.bak"):
+#             if remote.path.isfile("config_inc.php"):
+#                 remote.remove("config_inc.php")
+#             remote.rename("config_inc.php.bak", "config_inc.php")
 
 
 @pytest.fixture(scope="session", autouse=True)
